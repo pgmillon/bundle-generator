@@ -39,6 +39,9 @@ class ScriptHandler
         $handler = new ScriptHandler($event);
         $handler->readParameters();
         $handler->buildBundleClass();
+        $handler->buildExtensionClass();
+        $handler->buildConfigurationClass();
+        $handler->buildComposerFile();
     }
 
     /**
