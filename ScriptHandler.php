@@ -113,9 +113,14 @@ class ScriptHandler
     {
         return $this->twig;
     }
+    
+    public function getRootDir()
+    {
+        return getcwd();
+    }
 
     public function getBundleClassFile()
     {
-        return __DIR__ . '/' . $this->getParameter(self::PARAMETER_VENDOR) . $this->getParameter(self::PARAMETER_BUNDLE) . '.php';
+        return $this->getRootDir() . '/' . $this->getParameter(self::PARAMETER_VENDOR) . $this->getParameter(self::PARAMETER_BUNDLE) . '.php';
     }
 }

@@ -22,8 +22,4 @@ class ScriptHandlerTest extends ScriptHandler
         return $this->rootDir;
     }
 
-    public function getBundleClassFile()
-    {
-        return $this->getRootDir() . '/' . $this->getParameter(self::PARAMETER_VENDOR) . $this->getParameter(self::PARAMETER_BUNDLE) . '.php';
-    }
 }

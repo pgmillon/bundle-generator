@@ -15,6 +15,7 @@ use Symfony\BundleGenerator\Parameter;
 use Composer\IO\ConsoleIO;
 use Composer\Factory;
 use Composer\Script\Event;
+use Composer\Util\Filesystem;
 
 /**
  * Description of SymfonyBundleTests
@@ -51,6 +52,19 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
         $bundleClass = file_get_contents($handler->getBundleClassFile());
         $this->assertRegExp(sprintf('/namespace %s\\\\%s;/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
         $this->assertRegExp(sprintf('/class %s extends Bundle/', self::BUNDLE_VENDOR.self::BUNDLE_NAME), $bundleClass);
+    }
+    
+    /**
+     * @test
+     */
+    public function iCanGetProjectPath()
+    {
+        $filesystem = new Filesystem();
+        $config = $this->getPostCreateEvent()->getComposer()->getConfig();
+        $basePath = $filesystem->normalizePath(getcwd());
+        $vendorPath = $filesystem->normalizePath(realpath($config->get('vendor-dir')));
+        $appBaseDirCode = $filesystem->findShortestPathCode($vendorPath, $basePath, true);
+        $appBaseDirCode = str_replace('__DIR__', '$vendorDir', $appBaseDirCode);
     }
     
     protected function getIO()
