@@ -1,0 +1,30 @@
+{
+  "name": "pgmillon/bundle-generator",
+  "type": "symfony-bundle",
+  "description": "",
+  "keywords": [],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Pierre-Gildas MILLON",
+      "email": "pierre-gildas.millon@ineat-conseil.fr"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.3",
+    "symfony/console": ">=2.3, <2.4-dev",
+    "twig/twig": ">=1.13.0, <2.0"
+  },
+  "require-dev": {
+    "composer/composer": "1.0.0-alpha7"
+  },
+  "autoload": {
+    "psr-0": {
+      "Symfony\\BundleGenerator": ""
+    }
+  },
+  "target-dir": "Symfony/BundleGenerator",
+  "scripts": {
+    "post-create-project-cmd": "Symfony\\BundleGenerator\\ScriptHandler::buildClasses"
+  }
+}

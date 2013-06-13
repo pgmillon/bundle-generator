@@ -1,0 +1,15 @@
+
+framework:
+    router:          { resource: "%kernel.root_dir%/config/routing.yml" }
+    profiler:        { only_exceptions: false }
+    test:             ~
+    #esi:             ~
+    #translator:      { fallback: %locale% }
+    secret:          2dd2a897c6455891d993bc9dde99fb1ca024246b
+    form:            true
+    csrf_protection: true
+    validation:      { enable_annotations: true }
+    templating:      { engines: ['twig'] } #assets_version: SomeVersionScheme
+    default_locale:  en
+    session:
+        storage_id: session.storage.mock_file
