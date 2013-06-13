@@ -1,0 +1,23 @@
+{
+  "name": "{{ parameters.vendor.getValue|lower }}/{{ parameters.bundle.getValue|lower }}",
+  "type": "symfony-bundle",
+  "description": "",
+  "keywords": [],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Pierre-Gildas MILLON",
+      "email": "pierre-gildas.millon@ineat-conseil.fr"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.3",
+    "symfony/symfony": ">=2.3, <2.4-dev",
+  },
+  "autoload": {
+    "psr-0": {
+      "{{ parameters.vendor.getValue }}\\{{ parameters.bundle.getValue }}": ""
+    }
+  },
+  "target-dir": "{{ parameters.vendor.getValue }}/{{ parameters.bundle.getValue }}"
+}

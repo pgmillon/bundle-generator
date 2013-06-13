@@ -2,6 +2,7 @@
 
 namespace Symfony\BundleGenerator;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Composer\Script\Event;
 use \Twig_Environment;
 use \Twig_Loader_Filesystem;
@@ -67,8 +68,30 @@ class ScriptHandler
 
     public function buildBundleClass()
     {
-        $content = $this->getTwig()->render('Bundle.php.twig', ['parameters' => $this->getParameters()]);
-        file_put_contents($this->getBundleClassFile(), $content);
+        $this->buildFile('Bundle.php.twig', $this->getBundleClassFile());
+    }
+
+    public function buildExtensionClass()
+    {
+        $this->buildFile('Extension.php.twig', $this->getExtensionClassFile());
+    }
+
+    public function buildConfigurationClass()
+    {
+        $this->buildFile('Configuration.php.twig', $this->getConfigurationClassFile());
+    }
+    
+    public function buildComposerFile()
+    {
+        $this->buildFile('composer.json.twig', $this->getComposerFile());
+    }
+    
+    protected function buildFile($templateFile, $filename)
+    {
+        $fs = new Filesystem();
+        $content = $this->getTwig()->render($templateFile, ['parameters' => $this->getParameters()]);
+        $fs->mkdir(dirname($filename));
+        file_put_contents($filename, $content);
     }
 
     /**
@@ -123,4 +146,23 @@ class ScriptHandler
     {
         return $this->getRootDir() . '/' . $this->getParameter(self::PARAMETER_VENDOR) . $this->getParameter(self::PARAMETER_BUNDLE) . '.php';
     }
+
+    public function getExtensionClassFile()
+    {
+        $filename = $this->getParameter(self::PARAMETER_VENDOR);
+        $filename .= str_replace('Bundle', '', $this->getParameter(self::PARAMETER_BUNDLE));
+        $filename .= 'Extension';
+        return $this->getRootDir() . '/DependencyInjection/' . $filename . '.php';
+    }
+
+    public function getConfigurationClassFile()
+    {
+        return $this->getRootDir() . '/DependencyInjection/Configuration.php';
+    }
+    
+    public function getComposerFile()
+    {
+        return $this->getRootDir() . '/composer.json';
+    }
+    
 }

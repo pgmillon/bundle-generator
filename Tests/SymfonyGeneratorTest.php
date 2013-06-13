@@ -15,7 +15,6 @@ use Symfony\BundleGenerator\Parameter;
 use Composer\IO\ConsoleIO;
 use Composer\Factory;
 use Composer\Script\Event;
-use Composer\Util\Filesystem;
 
 /**
  * Description of SymfonyBundleTests
@@ -43,11 +42,7 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     public function iCanGenerateBundleClass()
     {
-        $handler = new ScriptHandlerTest($this->getPostCreateEvent());
-        $handler->setParameters([
-            ScriptHandler::PARAMETER_VENDOR => new Parameter('', self::BUNDLE_VENDOR),
-            ScriptHandler::PARAMETER_BUNDLE => new Parameter('', self::BUNDLE_NAME),
-        ]);
+        $handler = $this->getHandler();
         $handler->buildBundleClass();
         $bundleClass = file_get_contents($handler->getBundleClassFile());
         $this->assertRegExp(sprintf('/namespace %s\\\\%s;/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
@@ -57,14 +52,38 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function iCanGetProjectPath()
+    public function iCanGenerateExtensionClass()
     {
-        $filesystem = new Filesystem();
-        $config = $this->getPostCreateEvent()->getComposer()->getConfig();
-        $basePath = $filesystem->normalizePath(getcwd());
-        $vendorPath = $filesystem->normalizePath(realpath($config->get('vendor-dir')));
-        $appBaseDirCode = $filesystem->findShortestPathCode($vendorPath, $basePath, true);
-        $appBaseDirCode = str_replace('__DIR__', '$vendorDir', $appBaseDirCode);
+        $handler = $this->getHandler();
+        $handler->buildExtensionClass();
+        $bundleClass = file_get_contents($handler->getExtensionClassFile());
+        $this->assertRegExp(sprintf('/namespace %s\\\\%s\\\\DependencyInjection;/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
+        $this->assertRegExp(sprintf('/class %sExtension extends Extension/', self::BUNDLE_VENDOR.self::BUNDLE_NAME), $bundleClass);
+    }
+    
+    /**
+     * @test
+     */
+    public function iCanGenerateConfigurationClass()
+    {
+        $handler = $this->getHandler();
+        $handler->buildConfigurationClass();
+        $bundleClass = file_get_contents($handler->getConfigurationClassFile());
+        $this->assertRegExp(sprintf('/namespace %s\\\\%s\\\\DependencyInjection;/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
+        $this->assertRegExp(sprintf('/\\$rootNode = \\$treeBuilder->root\\(\'%s_%s\'\\)/', strtolower(self::BUNDLE_VENDOR), strtolower(str_replace('Bundle', '', self::BUNDLE_NAME))), $bundleClass);
+    }
+    
+    /**
+     * @test
+     */
+    public function iCanGenerateComposerFile()
+    {
+        $handler = $this->getHandler();
+        $handler->buildComposerFile();
+        $bundleClass = file_get_contents($handler->getComposerFile());
+        $this->assertRegExp(sprintf('/"name": "%s\\/%s",/', strtolower(self::BUNDLE_VENDOR), strtolower(self::BUNDLE_NAME)), $bundleClass);
+        $this->assertRegExp(sprintf('/"%s\\\\\\\\%s": ""/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
+        $this->assertRegExp(sprintf('/"target-dir": "%s\\/%s"/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
     }
     
     protected function getIO()
@@ -84,5 +103,15 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
         $io = $this->getIO();
         $composer = Factory::create($io);
         return new Event('post-create-project-cmd', $composer, $io);
+    }
+    
+    protected function getHandler()
+    {
+        $handler = new ScriptHandlerTest($this->getPostCreateEvent());
+        $handler->setParameters([
+            ScriptHandler::PARAMETER_VENDOR => new Parameter('', self::BUNDLE_VENDOR),
+            ScriptHandler::PARAMETER_BUNDLE => new Parameter('', self::BUNDLE_NAME),
+        ]);
+        return $handler;
     }
 }
