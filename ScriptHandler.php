@@ -55,7 +55,7 @@ class ScriptHandler
             self::PARAMETER_VENDOR => new Parameter('Vendor name', 'Acme'),
             self::PARAMETER_BUNDLE => new Parameter('Bundle name', 'MyBundle'),
         ];
-        $loader = new Twig_Loader_Filesystem(__DIR__ . '/Resources/classes');
+        $loader = new Twig_Loader_Filesystem(__DIR__ . '/Resources/templates');
         $this->twig = new Twig_Environment($loader);
     }
 
