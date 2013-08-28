@@ -25,7 +25,11 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     
     const BUNDLE_VENDOR = 'TestCompany';
-    const BUNDLE_NAME = 'TestBundle';
+    const BUNDLE_NAME = 'Test';
+    
+    static function getBundleName($suffix = 'Bundle') {
+        return self::BUNDLE_NAME.$suffix;
+    }
     
     /**
      * 
@@ -45,8 +49,8 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
         $handler = $this->getHandler();
         $handler->buildBundleClass();
         $bundleClass = file_get_contents($handler->getBundleClassFile());
-        $this->assertRegExp(sprintf('/namespace %s\\\\%s;/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
-        $this->assertRegExp(sprintf('/class %s extends Bundle/', self::BUNDLE_VENDOR.self::BUNDLE_NAME), $bundleClass);
+        $this->assertRegExp(sprintf('/namespace %s\\\\%s;/', self::BUNDLE_VENDOR, self::getBundleName()), $bundleClass);
+        $this->assertRegExp(sprintf('/class %s extends Bundle/', self::BUNDLE_VENDOR.self::getBundleName()), $bundleClass);
     }
     
     /**
@@ -57,8 +61,8 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
         $handler = $this->getHandler();
         $handler->buildExtensionClass();
         $bundleClass = file_get_contents($handler->getExtensionClassFile());
-        $this->assertRegExp(sprintf('/namespace %s\\\\%s\\\\DependencyInjection;/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
-        $this->assertRegExp(sprintf('/class %sExtension extends Extension/', self::BUNDLE_VENDOR.self::BUNDLE_NAME), $bundleClass);
+        $this->assertRegExp(sprintf('/namespace %s\\\\%s\\\\DependencyInjection;/', self::BUNDLE_VENDOR, self::getBundleName()), $bundleClass);
+        $this->assertRegExp(sprintf('/class %sExtension extends Extension/', self::BUNDLE_VENDOR.self::getBundleName('')), $bundleClass);
     }
     
     /**
@@ -69,8 +73,8 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
         $handler = $this->getHandler();
         $handler->buildConfigurationClass();
         $bundleClass = file_get_contents($handler->getConfigurationClassFile());
-        $this->assertRegExp(sprintf('/namespace %s\\\\%s\\\\DependencyInjection;/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
-        $this->assertRegExp(sprintf('/\\$rootNode = \\$treeBuilder->root\\(\'%s_%s\'\\)/', strtolower(self::BUNDLE_VENDOR), strtolower(str_replace('Bundle', '', self::BUNDLE_NAME))), $bundleClass);
+        $this->assertRegExp(sprintf('/namespace %s\\\\%s\\\\DependencyInjection;/', self::BUNDLE_VENDOR, self::getBundleName()), $bundleClass);
+        $this->assertRegExp(sprintf('/\\$rootNode = \\$treeBuilder->root\\(\'%s_%s\'\\)/', strtolower(self::BUNDLE_VENDOR), strtolower(str_replace('Bundle', '', self::getBundleName()))), $bundleClass);
     }
     
     /**
@@ -81,9 +85,9 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
         $handler = $this->getHandler();
         $handler->buildComposerFile();
         $bundleClass = file_get_contents($handler->getComposerFile());
-        $this->assertRegExp(sprintf('/"name": "%s\\/%s",/', strtolower(self::BUNDLE_VENDOR), strtolower(self::BUNDLE_NAME)), $bundleClass);
-        $this->assertRegExp(sprintf('/"%s\\\\\\\\%s": ""/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
-        $this->assertRegExp(sprintf('/"target-dir": "%s\\/%s"/', self::BUNDLE_VENDOR, self::BUNDLE_NAME), $bundleClass);
+        $this->assertRegExp(sprintf('/"name": "%s\\/%s",/', strtolower(self::BUNDLE_VENDOR), strtolower(self::getBundleName())), $bundleClass);
+        $this->assertRegExp(sprintf('/"%s\\\\\\\\%s": ""/', self::BUNDLE_VENDOR, self::getBundleName()), $bundleClass);
+        $this->assertRegExp(sprintf('/"target-dir": "%s\\/%s"/', self::BUNDLE_VENDOR, self::getBundleName()), $bundleClass);
     }
     
     protected function getIO()
@@ -110,7 +114,7 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
         $handler = new ScriptHandlerTest($this->getPostCreateEvent());
         $handler->setParameters([
             ScriptHandler::PARAMETER_VENDOR => new Parameter('', self::BUNDLE_VENDOR),
-            ScriptHandler::PARAMETER_BUNDLE => new Parameter('', self::BUNDLE_NAME),
+            ScriptHandler::PARAMETER_BUNDLE => new Parameter('', self::getBundleName()),
         ]);
         return $handler;
     }
