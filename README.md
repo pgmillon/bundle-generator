@@ -3,7 +3,7 @@ bundle-generator
 
 A Symfony2 bundle generation script meant to be used by composer
 
-** Usage
+## Usage
 
       composer create-project pgmillon/symfony-bundle MyBundle
 
