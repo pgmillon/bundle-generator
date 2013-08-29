@@ -42,6 +42,8 @@ class ScriptHandler
         $handler->buildExtensionClass();
         $handler->buildConfigurationClass();
         $handler->buildComposerFile();
+        $handler->buildTestAppKernelFile();
+        $handler->buildTestServicesFile();
     }
 
     /**
