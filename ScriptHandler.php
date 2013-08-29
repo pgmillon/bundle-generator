@@ -89,6 +89,16 @@ class ScriptHandler
         $this->buildFile('composer.json.twig', $this->getComposerFile());
     }
     
+    public function buildTestAppKernelFile()
+    {
+        $this->buildFile('AppKernel.php.twig', $this->getTestAppKernelFile());
+    }
+    
+    public function buildTestServicesFile()
+    {
+        $this->buildFile('services.xml.twig', $this->getTestServicesFile());
+    }
+    
     protected function buildFile($templateFile, $filename)
     {
         $fs = new Filesystem();
@@ -166,6 +176,16 @@ class ScriptHandler
     public function getComposerFile()
     {
         return $this->getRootDir() . '/composer.json';
+    }
+    
+    public function getTestAppKernelFile()
+    {
+        return $this->getRootDir() . '/Tests/Fixtures/app/AppKernel.php';
+    }
+    
+    public function getTestServicesFile()
+    {
+        return $this->getRootDir() . '/Resources/config/services.xml';
     }
     
 }

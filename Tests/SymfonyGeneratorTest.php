@@ -90,6 +90,39 @@ class SymfonyGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertRegExp(sprintf('/"target-dir": "%s\\/%s"/', self::BUNDLE_VENDOR, self::getBundleName()), $bundleClass);
     }
     
+    /**
+     * @test
+     */
+    public function iCanGenerateTestAppKernelClass()
+    {
+        $handler = $this->getHandler();
+        $handler->buildTestAppKernelFile();
+        $classFile = file_get_contents($handler->getTestAppKernelFile());
+        $this->assertRegExp(sprintf('/new %1$s\\\\%2$s\\\\%1$s%2$s\\(\\),/', self::BUNDLE_VENDOR, self::getBundleName()), $classFile);
+    }
+    
+    /**
+     * @test
+     */
+    public function iCanGenerateTestServicesFile()
+    {
+        $handler = $this->getHandler();
+        $handler->buildTestServicesFile();
+        $servicesFile = file_get_contents($handler->getTestServicesFile());
+        $this->assertRegExp(sprintf(
+            '/<parameter key="%s_%s.example.class">%s\\\\%s\\\\Example<\\/parameter>/', 
+            strtolower(self::BUNDLE_VENDOR), 
+            strtolower(self::getBundleName(null)),
+            self::BUNDLE_VENDOR,
+            self::getBundleName()
+            ), $servicesFile);
+        $this->assertRegExp(sprintf(
+            '/<service id="%s_%s.example" class="%%%1$s_%2$s.example.class%%">/', 
+            strtolower(self::BUNDLE_VENDOR), 
+            strtolower(self::getBundleName(null))
+            ), $servicesFile);
+    }
+    
     protected function getIO()
     {
         $styles = Factory::createAdditionalStyles();
